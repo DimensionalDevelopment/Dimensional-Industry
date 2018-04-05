@@ -16,6 +16,11 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
 repositories {
     maven { url "https://jitpack.io" }
 }
@@ -29,6 +34,7 @@ dependencies {
 // Mod version
 version = ext.modversion = "1.0.0"
 group = "org.dimdev.dimindustry"
+archivesBaseName = "DimensionalIndustry"
 
 // Travis build number
 String fullVersion = version
@@ -37,10 +43,10 @@ if (System.getenv("TRAVIS_BUILD_NUMBER") != null) {
 } else {
     fullVersion += "+UNOFFICIAL"
 }
+String jarVersion = fullVersion.replace("+", "-") // Github/Travis doesn't seem to support + in filenames
 
 // Jar name format
 archivesBaseName = "DimensionalIndustry"
-jar.archiveName = "DimensionalIndustry-" + fullVersion + ".jar"
 
 // Minecraft, MCP, Forge, and Java versions
 sourceCompatibility = targetCompatibility = '1.8'
@@ -48,9 +54,12 @@ ext.mcversion = "1.12.2"
 ext.forgeversion = "14.23.2.2654"
 String mcpversion = "snapshot_20180404"
 
-configurations {
-    embed
-    compile.extendsFrom(embed)
+minecraft {
+    version = "$mcversion-$forgeversion"
+    runDir = "run"
+    mappings = mcpversion
+    replace '${version}', version
+    makeObfSourceJar = false
 }
 
 // Tasks
@@ -59,22 +68,26 @@ compileJava {
 }
 
 jar {
+    archiveName = archivesBaseName + "-" + jarVersion + ".jar"
     from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
 }
 
-minecraft {
-    version = "$mcversion-$forgeversion"
-    runDir = "run"
-    mappings = mcpversion
-    replace '${version}', version
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveName = archivesBaseName + "-" + jarVersion + "-sources.jar"
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 processResources {
-    // this will ensure that this task is redone when the versions change.
+    // This will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
+    // Replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
@@ -82,7 +95,7 @@ processResources {
         expand 'version': project.version, 'mcversion': project.minecraft.version
     }
 
-    // copy everything else except the mcmod.info
+    // Copy everything else except mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
