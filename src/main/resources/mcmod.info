@@ -1,0 +1,16 @@
+[
+{
+  "modid": "dimindustry",
+  "name": "Dimensional Industry",
+  "description": "An addon mod for Dimensional Doors centered around harnessing the power of rifts for industrial purposes.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["WaterPicker", "TechDweebGaming", "Runemoro"],
+  "credits": "The entire Dimensional Doors team, as well as all those who assisted with ideas in the DD Discord!",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
