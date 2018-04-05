@@ -1,0 +1,8 @@
+#PARSE_ESCAPES
+
+itemGroup.dimensional_industry_creative_tab=Dimensional Industry Items
+
+dimdoors.general=General Options
+dimdoors.general.tooltip=General configuration options for the mod
+dimdoors.general.useStatusBar=Status Bar Messages
+dimdoors.general.useStatusBar.tooltip=Whether to use the status bar to send messages rather than the chat.

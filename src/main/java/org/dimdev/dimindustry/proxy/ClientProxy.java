@@ -8,8 +8,8 @@ import net.minecraftforge.fml.relauncher.Side;
 
 @EventBusSubscriber(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
-	
-	@Override
+
+    @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
     }

@@ -7,54 +7,66 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
-
-version = "1.0.0"
-group = "org.dimdev.dimindustry" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "dimindustry"
-
-sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.11'
+    id 'java'
 }
 
-minecraft {
-    version = "1.12.2-14.23.2.2654"
-    runDir = "run"
-    
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20171003"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+apply plugin: 'java'
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+repositories {
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+    // embed 'com.flowpowered:flow-math:1.0.3'
+    compile 'com.github.DimensionalDevelopment:DimDoors:1c78b5e629'
+    compileOnly 'com.github.DimensionalDevelopment:AnnotatedNBT:-SNAPSHOT'
+}
 
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+// Mod version
+version = ext.modversion = "1.0.0"
+group = "org.dimdev.dimindustry"
 
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+// Travis build number
+String fullVersion = version
+if (System.getenv("TRAVIS_BUILD_NUMBER") != null) {
+    fullVersion += "+${System.getenv("TRAVIS_BUILD_NUMBER")}"
+} else {
+    fullVersion += "+UNOFFICIAL"
+}
 
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+// Jar name format
+archivesBaseName = "DimensionalIndustry"
+jar.archiveName = "DimensionalIndustry-" + fullVersion + ".jar"
 
+// Minecraft, MCP, Forge, and Java versions
+sourceCompatibility = targetCompatibility = '1.8'
+ext.mcversion = "1.12.2"
+ext.forgeversion = "14.23.2.2654"
+String mcpversion = "snapshot_20180404"
+
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
+// Tasks
+compileJava {
+    //options.compilerArgs += "-proc:only" // To debug AnnotatedNBT code generation
+}
+
+jar {
+    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+minecraft {
+    version = "$mcversion-$forgeversion"
+    runDir = "run"
+    mappings = mcpversion
+    replace '${version}', version
 }
 
 processResources {
@@ -65,11 +77,11 @@ processResources {
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version, 'mcversion': project.minecraft.version
     }
-        
+
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
