@@ -5,6 +5,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -15,7 +16,7 @@ import org.dimdev.dimdoors.shared.items.*;
 
 @Mod.EventBusSubscriber(modid = DimensionalIndustry.MODID)
 public final class ModItems {
-    // Dimensional Core items
+    // Dimensional Core Items
     @ObjectHolder("dimdoors:world_thread") public static final Item WORLD_THREAD = null;
     @ObjectHolder("dimdoors:stable_fabric") public static final Item STABLE_FABRIC = null;
     @ObjectHolder("dimdoors:rift_connection_tool") public static final ItemRiftConfigurationTool RIFT_CONNECTION_TOOL = null;
@@ -27,18 +28,18 @@ public final class ModItems {
     @ObjectHolder("dimdoors:fabric") public static final ItemBlock FABRIC = null;
     @ObjectHolder("dimdoors:ancient_fabric") public static final ItemBlock ANCIENT_FABRIC = null;
 
-    // Creative tab
+    // Creative Tab
     public static final CreativeTabs DIM_DOORS_CREATIVE_TAB = new CreativeTabs("dimensional_industry_creative_tab") {
         @Override
         @SideOnly(Side.CLIENT)
         public ItemStack getTabIconItem() {
-            return new ItemStack(Items.COAL); // TODO: Change icon once we have a dimindustry item
+            return new ItemStack(Items.ENDER_PEARL); // TODO: Change icon once we have a dimindustry item
         }
     };
 
     // Dimensional Industry items
 
-    // Register items
+    // Register Items
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().registerAll(
@@ -46,5 +47,13 @@ public final class ModItems {
                 // ITEM_2
                 // ...
         );
+    }
+    
+    // Register Item Models
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public static void registerModels(ModelRegistryEvent event) {
+    	// item1.initModel();
+    	// item2.initModel();
     }
 }
