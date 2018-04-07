@@ -6,3 +6,5 @@ dimdoors.general=General Options
 dimdoors.general.tooltip=General configuration options for the mod
 dimdoors.general.useStatusBar=Status Bar Messages
 dimdoors.general.useStatusBar.tooltip=Whether to use the status bar to send messages rather than the chat.
+
+chat.place.not_on_rift=This block must be placed on a rift to function!

@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 
 public class DirectionalBlock extends BasicBlock {
 	
-private boolean isFullBlock;
+	private boolean isFullBlock;
 	
 	public static final PropertyDirection FACING = PropertyDirection.create("facing");
 	
