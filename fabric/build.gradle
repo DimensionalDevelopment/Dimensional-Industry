@@ -1,0 +1,87 @@
+plugins {
+    id 'multiloader-loader'
+    id 'fabric-loom'
+}
+
+// Compile against a library and bundle it into the jar (jar-in-jar).
+def includeCompile(entry) {
+    project.dependencies {
+        modImplementation(entry)
+        include(entry)
+    }
+}
+
+dependencies {
+    def loaderExclude = { exclude group: "net.fabricmc", module: "fabric-loader" }
+
+    minecraft libs.minecraft
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment(variantOf(libs.parchment) { artifactType("zip") })
+    }
+    modImplementation libs.fabric.api
+    modImplementation libs.fabric.loader
+
+    modImplementation(libs.dimdoors.fabric)
+    // DimDoors ships these as nested jars and leaves them out of its POM. Loom strips
+    // nested jars from mod dependencies without extracting them, so dev runs need them
+    // added by hand. Local-only: the DimDoors jar provides them outside of dev.
+    modLocalRuntime libs.fabric.asm
+    localRuntime libs.apfloat
+    localRuntime libs.jheaps
+    localRuntime libs.jgrapht
+    localRuntime libs.poly2tri
+
+    // Mod dependencies, e.g.:
+    //   modCompileOnly libs.some.mod.fabric                  // compile against it
+    //   modLocalRuntime(libs.some.mod.fabric, loaderExclude) // only present in dev runs
+    //   includeCompile libs.some.library                     // bundle a plain java library
+}
+
+loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+        useLegacyMixinAp = true
+    }
+    runs {
+        client {
+            client()
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('runs/client')
+        }
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('runs/server')
+        }
+        data {
+            inherit client
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${project(":common").file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=${mod_id}"
+
+            runDir "build/datagen"
+        }
+
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir "src/main/datagen"
+            }
+            resources {
+                srcDirs += [
+                        project(":common").file("src/main/generated")
+                ]
+            }
+        }
+    }
+}

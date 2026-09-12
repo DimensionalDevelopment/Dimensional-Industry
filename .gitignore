@@ -1,4 +1,5 @@
 # eclipse
+eclipse
 bin
 *.launch
 .settings
@@ -11,15 +12,26 @@ out
 *.ipr
 *.iws
 *.iml
-.idea
+.idea/*
+!.idea/codeStyles
 
 # gradle
 build
 .gradle
 
+#Netbeans
+.nb-gradle
+.nb-gradle-properties
+
 # other
-eclipse
 run
 .DS_Store
 Thumbs.db
-CommandPrompt\.bat
+remappedSrc
+logs
+*.hprof
+.vscode
+/test
+.libs/
+
+fabric/runs/

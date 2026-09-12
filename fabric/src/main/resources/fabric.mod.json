@@ -1,0 +1,35 @@
+{
+    "schemaVersion": 1,
+    "id": "${mod_id}",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${fabric_mod_authors}"
+    ],
+    "contact": {
+        "homepage": "",
+        "sources": "",
+        "issues": ""
+    },
+    "license": "${license}",
+    "icon": "${mod_id}.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "org.dimdev.dimindustry.fabric.DimensionalIndustryFabric"
+        ],
+        "client": [
+        ],
+        "fabric-datagen": [
+        ]
+    },
+    "mixins": [
+    ],
+    "depends": {
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric-api": "*",
+        "minecraft": "${minecraft_version}",
+        "java": ">=${java_version}"
+    }
+}
