@@ -17,6 +17,13 @@ logoFile = "${mod_id}.png"
 # [[mixins]]
 # config = "${mod_id}.mixins.json"
 
+[[mixins]]
+config = "${mod_id}.create-compat.mixins.json"
+
+[[mixins]]
+config = "${mod_id}.simulated-compat.mixins.json"
+
+
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
@@ -28,6 +35,34 @@ side = "BOTH"
 modId = "minecraft"
 type = "required"
 versionRange = "${minecraft_version_range}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "dimdoors"
+type = "required"
+versionRange = "[${dimdoors_version},)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "create"
+type = "optional"
+versionRange = "[6.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "simulated"
+type = "optional"
+versionRange = "[1.3.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${mod_id}]]
+modId = "aeronautics"
+type = "optional"
+versionRange = "[1.3.1,)"
 ordering = "NONE"
 side = "BOTH"
 

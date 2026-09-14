@@ -7,6 +7,6 @@ import org.dimdev.dimindustry.common.IDimensionalIndustrySided;
 
 public class DimensionalIndustryFabric extends FabricSided<DimensionalIndustryFabric, DimensionalIndustry> implements IDimensionalIndustrySided<DimensionalIndustryFabric> {
     public DimensionalIndustryFabric() {
-        super(new DimensionalIndustry());
+        super(DimensionalIndustry.INSTANCE);
     }
 }

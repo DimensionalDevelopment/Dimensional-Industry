@@ -22,6 +22,7 @@
         "client": [
         ],
         "fabric-datagen": [
+            "org.dimdev.dimindustry.fabric.DimensionalIndustryDataGen"
         ]
     },
     "mixins": [

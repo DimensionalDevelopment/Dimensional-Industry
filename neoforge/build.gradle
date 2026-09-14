@@ -30,6 +30,19 @@ dependencies {
     //   includeCompile libs.some.library     // bundle a plain java library
 
     implementation(libs.dimdoors.neoforge)
+
+    localRuntime(libs.sable.neoforge) {
+        exclude group: "foundry.veil"
+        // Leaked build dep in Sable's POM; not in its mods.toml and that build isn't published anywhere.
+        exclude group: "com.tterrag.registrate"
+    }
+    localRuntime(libs.simulated.neoforge) {
+        exclude group: "foundry.veil"
+    }
+    localRuntime(libs.aeronautics.neoforge) {
+        exclude group: "foundry.veil"
+    }
+    localRuntime libs.create
 }
 
 neoForge {

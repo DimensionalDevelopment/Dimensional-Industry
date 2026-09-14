@@ -1,0 +1,17 @@
+{
+  "required": false,
+  "package": "org.dimdev.dimindustry.neoforge.create.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "org.dimdev.dimindustry.neoforge.create.CreateMixinPlugin",
+  "minVersion": "0.8",
+  "mixins": [
+    "AbstractContraptionEntityMixin",
+    "ContraptionMixin",
+    "SlidingDoorBlockMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

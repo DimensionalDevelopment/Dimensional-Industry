@@ -51,7 +51,19 @@ dependencies {
     // Mod APIs the common code compiles against go in sharedCompileOnly so the loader
     // projects pick them up too, e.g.:
     //   sharedCompileOnly libs.some.mod.common
-    sharedCompileOnly(libs.dimdoors.common)
+    compileOnly(libs.dimdoors.common)
+
+    sharedCompileOnly libs.sable.common
+    sharedCompileOnly(libs.simulated.common) {
+        exclude group: "dev.ryanhcode.sable"
+    }
+    sharedCompileOnly(libs.aeronautics.common) {
+        exclude group: "dev.ryanhcode.sable"
+    }
+    sharedCompileOnly libs.create
+    // Create's SmartBlockEntity implements Ponder's VirtualBlockEntity; javac needs it to extend any KineticBlockEntity.
+    sharedCompileOnly libs.ponder.neoforge
+    sharedCompileOnly libs.flywheel.neoforge
 }
 
 artifacts {

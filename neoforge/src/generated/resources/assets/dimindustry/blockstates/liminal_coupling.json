@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "dimindustry:block/liminal_coupling",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "dimindustry:block/liminal_coupling",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "dimindustry:block/liminal_coupling",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "dimindustry:block/liminal_coupling",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "dimindustry:block/liminal_coupling"
+    },
+    "facing=west": {
+      "model": "dimindustry:block/liminal_coupling",
+      "x": 90,
+      "y": 270
+    }
+  }
+}
