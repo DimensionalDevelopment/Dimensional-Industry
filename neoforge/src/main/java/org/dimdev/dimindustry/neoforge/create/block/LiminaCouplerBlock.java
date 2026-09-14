@@ -5,13 +5,11 @@ import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,15 +17,14 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.dimdev.dimdoors.block.CustomBreakHandling;
 import org.dimdev.dimdoors.block.ModBlocks;
-import org.dimdev.dimdoors.block.PerservesBlockEntity;
-import org.dimdev.dimdoors.block.entity.Rift;
-import org.dimdev.dimdoors.block.entity.RiftData;
+import org.dimdev.dimdoors.block.RiftProvider;
 import org.dimdev.dimindustry.neoforge.create.CreateCompatBlockEntityTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<LiminalCouplerBlockEntity>, PerservesBlockEntity {
+public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<LiminalCouplerBlockEntity>, RiftProvider<LiminalCouplerBlockEntity>, CustomBreakHandling {
 
     public LiminaCouplerBlock(Properties properties) {
         super(properties);
@@ -42,7 +39,7 @@ public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<L
     @Override
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (!isPlacementTargetDetachedRift(context)) {
+        if (!context.getLevel().getBlockState(context.getClickedPos()).is(ModBlocks.DETACHED_RIFT)) {
             return null;
         }
 
@@ -55,46 +52,25 @@ public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<L
     }
 
     @Override
-    public @NotNull BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof LiminalCouplerBlockEntity coupler) {
-            coupler.setDeleteRift(false);
+    public @Nullable Boolean customDestroy(Level level, BlockPos pos, BlockState state, int flags, int recursionLeft) {
+        var rift = getRift(level, pos, state);
+        if (rift == null) {
+            return null;
         }
 
-        return super.playerWillDestroy(level, pos, state, player);
+        rift.detach();
+        return true;
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        RiftData data = null;
-        if (!level.isClientSide && !isMoving && !state.is(newState.getBlock()) && !newState.is(ModBlocks.DETACHED_RIFT)
-                && level.getBlockEntity(pos) instanceof LiminalCouplerBlockEntity coupler) {
-            data = coupler.getData().copy();
-            coupler.setDeleteRift(false);
+    public void onBlockExploded(BlockState state, Level level, BlockPos pos, Explosion explosion) {
+        var rift = getRift(level, pos, state);
+        if (rift == null) {
+            super.onBlockExploded(state, level, pos, explosion);
+            return;
         }
 
-        super.onRemove(state, level, pos, newState, isMoving);
-
-        if (data != null && level instanceof ServerLevel) {
-            level.setBlock(pos, ModBlocks.DETACHED_RIFT.defaultBlockState(), Block.UPDATE_ALL);
-            if (level.getBlockEntity(pos) instanceof Rift restoredRift) {
-                restoredRift.setData(data);
-                restoredRift.register();
-                restoredRift.updateType();
-            }
-        }
-    }
-
-    @Override
-    public boolean isCompatible(BlockState oldState) {
-        return oldState.is(ModBlocks.DETACHED_RIFT);
-    }
-
-    @Override
-    public void attemptTransfer(BlockEntity blockEntity, @Nullable BlockEntity blockEntityToBetransfered) {
-        if (blockEntity instanceof LiminalCouplerBlockEntity coupler && blockEntityToBetransfered instanceof Rift rift) {
-            coupler.copyFrom(rift);
-            coupler.register();
-        }
+        rift.detach();
     }
 
     @Override
@@ -123,11 +99,22 @@ public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<L
     }
 
     @Override
-    public BlockEntityType<? extends LiminalCouplerBlockEntity> getBlockEntityType() {
+    public BlockEntityType<LiminalCouplerBlockEntity> getBlockEntityType() {
         return CreateCompatBlockEntityTypes.LIMINAL_COUPLING;
     }
 
-    private static boolean isPlacementTargetDetachedRift(BlockPlaceContext context) {
-        return context.getLevel().getBlockState(context.getClickedPos()).is(ModBlocks.DETACHED_RIFT);
+    @Override
+    public BlockEntityType<LiminalCouplerBlockEntity> getRiftBlockEnityType() {
+        return getBlockEntityType();
+    }
+
+    @Override
+    public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
+        return IBE.super.newBlockEntity(pos, state);
+    }
+
+    @Override
+    public String providerType() {
+        return "Liminal Coupling";
     }
 }

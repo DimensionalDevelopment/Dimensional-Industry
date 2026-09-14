@@ -49,9 +49,9 @@ public class DimensionalIndustryDataGen implements DataGeneratorEntrypoint {
                     public void generate() {
 
                     }
-                }
+                };
             }
-        })
+        });
     }
 
     private static class ModelProvider extends FabricModelProvider {

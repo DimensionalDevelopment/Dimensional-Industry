@@ -4,6 +4,7 @@ import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorBlock;
 import com.simibubi.create.content.decoration.slidingDoor.SlidingDoorShapes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -130,7 +131,7 @@ public class SlidingDimensionalDoorBlock extends DimensionalDoorBlockRegistrar.A
             }
         }
 
-//        this.playSound(entity, level, pos, open); TODO: Enable
+        this.playSound(entity, level, pos, open);
         level.gameEvent(entity, open ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
     }
 
@@ -154,7 +155,7 @@ public class SlidingDimensionalDoorBlock extends DimensionalDoorBlockRegistrar.A
         }
 
         if (powered != state.getValue(OPEN)) {
-//            this.playSound(null, level, pos, powered); TODO: Renable
+            this.playSound(null, level, pos, powered);
             level.gameEvent(null, powered ? GameEvent.BLOCK_OPEN : GameEvent.BLOCK_CLOSE, pos);
 
             DoorHingeSide hinge = changedState.getValue(HINGE);
@@ -196,12 +197,12 @@ public class SlidingDimensionalDoorBlock extends DimensionalDoorBlockRegistrar.A
                 level.setBlock(otherPos, changedOtherDoor, Block.UPDATE_CLIENTS | Block.UPDATE_IMMEDIATE);
                 SlidingDoorInterop.scheduleWaterTickIfNeeded(level, otherPos, changedOtherDoor);
                 if (open) {
-//                    this.playSound(player, level, pos, true); TODO: renable
+                    this.playSound(player, level, pos, true);
                     level.gameEvent(player, GameEvent.BLOCK_OPEN, pos);
                 }
             }
         } else if (open) {
-//            this.playSound(player, level, pos, true); TODO: renable
+            this.playSound(player, level, pos, true);
             level.gameEvent(player, GameEvent.BLOCK_OPEN, pos);
         }
 
@@ -225,6 +226,10 @@ public class SlidingDimensionalDoorBlock extends DimensionalDoorBlockRegistrar.A
         level.setBlock(pos, closedState, Block.UPDATE_ALL);
         SlidingDoorInterop.scheduleWaterTickIfNeeded(level, pos, closedState);
         closeOtherDoorBehind(level, pos, closedState);
+    }
+
+    private void playSound(@javax.annotation.Nullable Entity source, Level level, BlockPos pos, boolean isOpening) {
+        level.playSound(source, pos, isOpening ? this.type().doorOpen() : this.type().doorClose(), SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
     private void closeOtherDoorBehind(Level level, BlockPos pos, BlockState closedState) {

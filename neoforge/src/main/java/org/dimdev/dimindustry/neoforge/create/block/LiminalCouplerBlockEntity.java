@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.dimdev.dimdoors.api.rift.target.Target;
 import org.dimdev.dimdoors.api.util.Location;
+import org.dimdev.dimdoors.block.ModBlocks;
+import org.dimdev.dimdoors.block.entity.ModBlockEntityTypes;
 import org.dimdev.dimdoors.block.entity.Rift;
 import org.dimdev.dimdoors.block.entity.RiftData;
 import org.dimdev.dimindustry.neoforge.create.CreateCompatBlockEntityTypes;
@@ -84,9 +86,13 @@ public class LiminalCouplerBlockEntity extends GeneratingKineticBlockEntity impl
     }
 
     @Override
-    public void remove() {
-        super.remove();
-        if(!getLevel().isClientSide()) unregister();
+    public void detach() {
+        if (level == null) {
+            return;
+        }
+
+        level.setBlockAndUpdate(worldPosition, ModBlocks.DETACHED_RIFT.defaultBlockState());
+        level.getBlockEntity(worldPosition, ModBlockEntityTypes.DETACHED_RIFT).ifPresent(rift -> rift.setData(getData()));
     }
 
     @Override
@@ -206,11 +212,6 @@ public class LiminalCouplerBlockEntity extends GeneratingKineticBlockEntity impl
     public void handleTargetGone(Location location) {
         Rift.super.handleTargetGone(location);
         syncTargetKinetics();
-    }
-
-    @Override
-    public void detach() {
-        unregister();
     }
 
 }
