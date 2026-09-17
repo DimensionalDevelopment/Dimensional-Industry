@@ -2,6 +2,7 @@ package org.dimdev.dimindustry.neoforge;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import org.dimdev.dimcore.DimCore;
 import org.dimdev.dimcore.NeoForgeSided;
 import org.dimdev.dimindustry.common.DimensionalIndustry;
 import org.dimdev.dimindustry.common.IDimensionalIndustrySided;
@@ -15,8 +16,8 @@ public class DimensionalIndustryNeoForge extends NeoForgeSided<DimensionalIndust
 
     @Override
     public void checkCompat() {
-        if (isModLoaded("create")) {
-            CreateCompat.init(this);
+        if (DimCore.platform().isModLoaded("create")) {
+            CreateCompat.init();
         }
     }
 }

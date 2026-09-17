@@ -4,6 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
+import org.dimdev.dimdoors.item.PlaceOnlyOnRiftBlockItem;
 import org.dimdev.dimindustry.common.DimensionalIndustry;
 import org.dimdev.dimindustry.neoforge.create.block.LiminaCouplerBlock;
 
@@ -17,7 +18,7 @@ public final class CreateCompatBlocks {
     private static <T extends Block> T register(String name, T block) {
         var sided = DimensionalIndustry.getSided();
         var registeredBlock = sided.register(Registries.BLOCK, name, block);
-        var item = sided.register(Registries.ITEM, name, new LiminalCouplerBlockItem(registeredBlock, new Item.Properties()));
+        var item = sided.register(Registries.ITEM, name, new PlaceOnlyOnRiftBlockItem(registeredBlock, new Item.Properties()));
         sided.appendStack(DIMENSIONAL_DOORS, item.getDefaultInstance());
         return registeredBlock;
     }

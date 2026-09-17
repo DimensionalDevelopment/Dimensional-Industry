@@ -24,7 +24,7 @@ import org.dimdev.dimindustry.neoforge.create.CreateCompatBlockEntityTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<LiminalCouplerBlockEntity>, RiftProvider<LiminalCouplerBlockEntity>, CustomBreakHandling {
+public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<LiminalCouplingBlockEntity>, RiftProvider<LiminalCouplingBlockEntity>, CustomBreakHandling {
 
     public LiminaCouplerBlock(Properties properties) {
         super(properties);
@@ -89,22 +89,22 @@ public class LiminaCouplerBlock extends DirectionalKineticBlock implements IBE<L
     }
 
     @Override
-    protected boolean isPathfindable(BlockState state, PathComputationType pathComputationType) {
+    protected boolean isPathfindable(@NotNull BlockState state, @NotNull PathComputationType pathComputationType) {
         return false;
     }
 
     @Override
-    public Class<LiminalCouplerBlockEntity> getBlockEntityClass() {
-        return LiminalCouplerBlockEntity.class;
+    public Class<LiminalCouplingBlockEntity> getBlockEntityClass() {
+        return LiminalCouplingBlockEntity.class;
     }
 
     @Override
-    public BlockEntityType<LiminalCouplerBlockEntity> getBlockEntityType() {
+    public BlockEntityType<LiminalCouplingBlockEntity> getBlockEntityType() {
         return CreateCompatBlockEntityTypes.LIMINAL_COUPLING;
     }
 
     @Override
-    public BlockEntityType<LiminalCouplerBlockEntity> getRiftBlockEnityType() {
+    public BlockEntityType<LiminalCouplingBlockEntity> getRiftBlockEnityType() {
         return getBlockEntityType();
     }
 

@@ -15,20 +15,16 @@ import org.dimdev.dimdoors.block.DoorSoundProvider;
 import org.dimdev.dimdoors.block.RiftProvider;
 import org.dimdev.dimdoors.block.door.DimensionalDoorBlockRegistrar;
 import org.dimdev.dimindustry.common.DimensionalIndustry;
-import org.dimdev.dimindustry.common.IDimensionalIndustrySided;
-import org.dimdev.dimindustry.neoforge.DimensionalIndustryNeoForge;
 import org.dimdev.dimindustry.neoforge.create.target.EmptyKineticTarget;
 import org.dimdev.dimindustry.neoforge.create.target.KineticTarget;
 
 public final class CreateCompat {
-    private CreateCompat() {
-    }
 
-    public static void init(IDimensionalIndustrySided<?> sided) {
+    public static void init() {
         DefaultTargets.registerDefaultTarget(KineticTarget.class, EmptyKineticTarget.INSTANCE);
-        sided.registerRunnable(Registries.BLOCK, CreateCompatBlocks::init);
+        DimensionalIndustry.getSided().registerRunnable(Registries.BLOCK, CreateCompatBlocks::init);
         DimensionalIndustry.getSided().registerRunnable(Registries.BLOCK_ENTITY_TYPE, CreateCompatBlockEntityTypes::init);
-        // Sliding entrance rifts lived in DimDoors before the compat moved here; keep old chunks loading.
+
         BuiltInRegistries.BLOCK_ENTITY_TYPE.addAlias(ResourceLocation.fromNamespaceAndPath(DimensionalDoors.MOD_ID, "sliding_entrance_rift"), DimensionalIndustry.id("sliding_entrance_rift"));
 
         BlockMovementChecks.registerMovementAllowedCheck((state, world, pos) -> state.getBlock() instanceof RiftProvider<?> ? CheckResult.SUCCESS : CheckResult.PASS);

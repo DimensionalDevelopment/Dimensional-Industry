@@ -19,6 +19,10 @@ fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version = "0.1
 dimdoors-common = { group = "org.dimdev", name = "dimdoors-common-1.21.1", version = "6.3.0" }
 dimdoors-fabric = { group = "org.dimdev", name = "dimdoors-fabric-1.21.1", version = "6.3.0" }
 dimdoors-neoforge = { group = "org.dimdev", name = "dimdoors-neoforge-1.21.1", version = "6.3.0" }
+dimcore-common = { group = "org.dimdev", name = "dimcore-common-1.21.1", version = "1.0.0" }
+dimcore-fabric = { group = "org.dimdev", name = "dimcore-fabric-1.21.1", version = "1.0.0" }
+dimcore-neoforge = { group = "org.dimdev", name = "dimcore-neoforge-1.21.1", version = "1.0.0" }
+
 apfloat = { group = "org.apfloat", name = "apfloat", version = "1.16.0" }
 jheaps = { group = "org.jheaps", name = "jheaps", version = "0.14" }
 jgrapht = { group = "org.jgrapht", name = "jgrapht-core", version = "1.6.0-SNAPSHOT" }

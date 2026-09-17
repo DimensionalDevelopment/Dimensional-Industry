@@ -22,7 +22,8 @@ dependencies {
     modImplementation libs.fabric.api
     modImplementation libs.fabric.loader
 
-    modImplementation(libs.dimdoors.fabric)
+    modImplementation libs.dimcore.fabric
+    modImplementation libs.dimdoors.fabric
     // DimDoors ships these as nested jars and leaves them out of its POM. Loom strips
     // nested jars from mod dependencies without extracting them, so dev runs need them
     // added by hand. Local-only: the DimDoors jar provides them outside of dev.

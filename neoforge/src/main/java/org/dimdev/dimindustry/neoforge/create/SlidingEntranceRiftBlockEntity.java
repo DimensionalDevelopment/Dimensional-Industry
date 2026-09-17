@@ -25,7 +25,7 @@ public class SlidingEntranceRiftBlockEntity extends EntranceRiftBlockEntity<Slid
         this(CreateCompatBlockEntityTypes.SLIDING_ENTRANCE_RIFT, pos, state);
     }
 
-    protected SlidingEntranceRiftBlockEntity(BlockEntityType<? extends SlidingEntranceRiftBlockEntity> type, BlockPos pos, BlockState state) {
+    protected SlidingEntranceRiftBlockEntity(BlockEntityType<SlidingEntranceRiftBlockEntity> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         this.animation = isOpen(state) ? 1 : 0;
         this.previousAnimation = this.animation;

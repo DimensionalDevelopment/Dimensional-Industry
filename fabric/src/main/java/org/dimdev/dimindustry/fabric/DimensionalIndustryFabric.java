@@ -9,4 +9,9 @@ public class DimensionalIndustryFabric extends FabricSided<DimensionalIndustryFa
     public DimensionalIndustryFabric() {
         super(DimensionalIndustry.INSTANCE);
     }
+
+    @Override
+    public void onInitialize() {
+        super.onInitialize();
+    }
 }

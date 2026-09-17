@@ -29,7 +29,8 @@ dependencies {
     //   localRuntime libs.some.mod.neoforge  // only present in dev runs
     //   includeCompile libs.some.library     // bundle a plain java library
 
-    implementation(libs.dimdoors.neoforge)
+    implementation libs.dimcore.neoforge
+    implementation libs.dimdoors.neoforge
 
     localRuntime(libs.sable.neoforge) {
         exclude group: "foundry.veil"

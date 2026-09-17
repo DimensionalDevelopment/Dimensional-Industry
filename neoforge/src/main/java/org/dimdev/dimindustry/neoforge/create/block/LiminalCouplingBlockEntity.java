@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public class LiminalCouplerBlockEntity extends GeneratingKineticBlockEntity implements Rift, KineticTarget {
+public class LiminalCouplingBlockEntity extends GeneratingKineticBlockEntity implements Rift, KineticTarget {
     @NotNull
     protected RiftData data = new RiftData();
     protected boolean riftStateChanged;
@@ -35,11 +35,11 @@ public class LiminalCouplerBlockEntity extends GeneratingKineticBlockEntity impl
     private float targetRotationalSpeed;
     private float targetStressCapacity;
 
-    public LiminalCouplerBlockEntity(BlockPos pos, BlockState state) {
+    public LiminalCouplingBlockEntity(BlockPos pos, BlockState state) {
         this(CreateCompatBlockEntityTypes.LIMINAL_COUPLING, pos, state);
     }
 
-    public LiminalCouplerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+    public LiminalCouplingBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
         setLazyTickRate(5);
     }
@@ -136,6 +136,7 @@ public class LiminalCouplerBlockEntity extends GeneratingKineticBlockEntity impl
         setChanged();
     }
 
+
     private KineticTarget resolveTargetKinetics() {
         Target target = getTarget();
         KineticTarget kineticTarget = target.as(KineticTarget.class);
@@ -195,11 +196,6 @@ public class LiminalCouplerBlockEntity extends GeneratingKineticBlockEntity impl
     @Override
     public Level getRiftLevel() {
         return getLevel();
-    }
-
-    @Override
-    public boolean isDetached() {
-        return false;
     }
 
     @Override
