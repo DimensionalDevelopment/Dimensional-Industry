@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static org.dimdev.dimdoors.item.ModItems.DIMENSIONAL_DOORS;
 
 public class DimensionalIndustryBlocks {
-    public static final Block HOURGLASS = register("hourglass", new HourGlassBlock(BlockBehaviour.Properties.ofFullCopy(ModBlocks.DRIFTWOOD_PLANKS)), block -> new PlaceOnlyOnRiftBlockItem(block, new Item.Properties()));
+    public static final Block HOURGLASS = register("hourglass", new HourGlassBlock(BlockBehaviour.Properties.ofFullCopy(ModBlocks.DRIFTWOOD_PLANKS).noOcclusion()), block -> new PlaceOnlyOnRiftBlockItem(block, new Item.Properties()));
 
     public static void init() {
         DimensionalIndustryBlockEntities.HOURGLASS.addBlock(HOURGLASS);

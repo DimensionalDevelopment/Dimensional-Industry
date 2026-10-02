@@ -1,11 +1,18 @@
 package org.dimdev.dimindustry.neoforge.client;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.dimdev.dimcore.DimCore;
 import org.dimdev.dimcore.client.NeoForgeClientSided;
 import org.dimdev.dimindustry.common.DimensionalIndustry;
@@ -14,6 +21,7 @@ import org.dimdev.dimindustry.common.client.IDimensionalIndustryClientSided;
 import org.dimdev.dimindustry.neoforge.create.CreateCompatBlockEntityTypes;
 import org.dimdev.dimindustry.neoforge.create.SlidingEntranceRiftBlockEntityRenderer;
 import org.dimdev.dimindustry.neoforge.create.client.CreateCompatClient;
+import org.jetbrains.annotations.Nullable;
 
 @Mod(value = DimensionalIndustry.MOD_ID, dist = Dist.CLIENT)
 public class DimensionalIndustryNeoForgeClient extends NeoForgeClientSided<DimensionalIndustryNeoForgeClient, DimensionalIndustryClient> implements IDimensionalIndustryClientSided<DimensionalIndustryNeoForgeClient> {

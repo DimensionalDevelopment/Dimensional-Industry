@@ -1,19 +1,17 @@
 package org.dimdev.dimindustry.common.block.entity;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluids;
 import org.dimdev.dimcore.DimCore;
 import org.dimdev.dimcore.api.transfer.FluidUnit;
 import org.dimdev.dimcore.api.transfer.Handle;
 import org.dimdev.dimdoors.api.rift.target.FluidTarget;
 import org.dimdev.dimdoors.block.entity.CodecRecord;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -21,40 +19,59 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HourGlassBlockEntity extends FluidTransferRiftBlockEntity<HourGlassBlockEntity> {
-    public static final Codec<FluidUnit> FLUID_UNIT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            BuiltInRegistries.FLUID.byNameCodec().fieldOf("fluid").forGetter(FluidUnit::fluid),
-            DataComponentPatch.CODEC.fieldOf("components").forGetter(FluidUnit::components),
-            Codec.LONG.fieldOf("amount").forGetter(FluidUnit::amount)
-    ).apply(instance, FluidUnit::new));
-
     private static final long CAPACITY = 4 * DimCore.platform().bucketAmount();
 
-    public static final CodecRecord<HourGlassBlockEntity, FluidUnit> BUFFER = new CodecRecord<>("buffer", FLUID_UNIT_CODEC, hourGlassBlock -> hourGlassBlock.buffer);
+    public static final CodecRecord<HourGlassBlockEntity, FluidUnit> BUFFER = new CodecRecord<>("buffer", FluidUnit.CODEC, FluidUnit.empty(), HourGlassBlockEntity::getBuffer);
 
-    public static final FluidUnit EMPTY = new FluidUnit(Fluids.EMPTY, 0);
-
-    private @Nonnull FluidUnit buffer = EMPTY;
+    private @Nonnull FluidUnit buffer = FluidUnit.empty();
 
     public HourGlassBlockEntity(BlockPos pos, BlockState state) {
         super(DimensionalIndustryBlockEntities.HOURGLASS, pos, state);
     }
 
+    public @NotNull FluidUnit getBuffer() {
+        return buffer;
+    }
+
+    public float getFillFraction() {
+        return (float) buffer.amount() / CAPACITY;
+    }
+
     @Override
     public long insert(FluidUnit unit, boolean simulate) {
-        long done = fill(unit, simulate);
-        if (done < unit.amount()) {
-            done += getNeighborHandle(Direction.DOWN).insert(unit.withAmount(unit.amount() - done), simulate);
+        if (!buffer.isEmpty() && !buffer.sameResource(unit)) {
+            return 0;
         }
-        return done;
+        long have = buffer.amount();
+        long accepted = Math.min(unit.amount(), CAPACITY - have);
+        if (accepted > 0 && !simulate) {
+            buffer = unit.withAmount(have + accepted);
+            sync();
+        }
+
+        accepted = Math.max(0, accepted);
+
+        if (accepted < unit.amount()) {
+            accepted += getNeighborHandle(Direction.DOWN).insert(unit.withAmount(unit.amount() - accepted), simulate);
+        }
+        return accepted;
     }
 
     @Override
     public long extract(FluidUnit unit, boolean simulate) {
-        long done = drain(unit, simulate);
-        if (done < unit.amount()) {
-            done += getNeighborHandle(Direction.UP).extract(unit.withAmount(unit.amount() - done), simulate);
+        if (!buffer.sameResource(unit)) {
+            return 0;
         }
-        return done;
+        long taken = Math.min(unit.amount(), buffer.amount());
+        if (taken > 0 && !simulate) {
+            buffer = taken == buffer.amount() ? FluidUnit.empty() : buffer.withAmount(buffer.amount() - taken);
+            sync();
+        }
+
+        if (taken < unit.amount()) {
+            taken += getNeighborHandle(Direction.UP).extract(unit.withAmount(unit.amount() - taken), simulate);
+        }
+        return taken;
     }
 
     @Override
@@ -65,31 +82,6 @@ public class HourGlassBlockEntity extends FluidTransferRiftBlockEntity<HourGlass
         }
         contents.addAll(getNeighborHandle(Direction.UP).contents());
         return contents;
-    }
-
-    private long fill(FluidUnit unit, boolean simulate) {
-        if (!buffer.isEmpty() && !buffer.sameResource(unit)) {
-            return 0;
-        }
-        long have = buffer.amount();
-        long accepted = Math.min(unit.amount(), CAPACITY - have);
-        if (accepted > 0 && !simulate) {
-            buffer = unit.withAmount(have + accepted);
-            setChanged();
-        }
-        return Math.max(0, accepted);
-    }
-
-    private long drain(FluidUnit unit, boolean simulate) {
-        if (!buffer.sameResource(unit)) {
-            return 0;
-        }
-        long taken = Math.min(unit.amount(), buffer.amount());
-        if (taken > 0 && !simulate) {
-            buffer = taken == buffer.amount() ? EMPTY : buffer.withAmount(buffer.amount() - taken);
-            setChanged();
-        }
-        return taken;
     }
 
     @Override
@@ -104,19 +96,16 @@ public class HourGlassBlockEntity extends FluidTransferRiftBlockEntity<HourGlass
         buffer = nbt.get(BUFFER);
     }
 
-    // ---- local role: neighbours and buckets ----
-
     @Override
     public Handle<FluidUnit> handle(@Nullable Direction direction) {
         return switch (direction) {
             case UP -> insertOnly;
             case DOWN -> extractOnly;
-            case null -> throughRift; // a held bucket: not a pipe, so it may fill or drain
+            case null -> throughRift;
             default -> null;
         };
     }
 
-    /** Local first, then the far end. */
     private final Handle<FluidUnit> throughRift = new Handle<>() {
         @Override
         public long insert(FluidUnit unit, boolean simulate) {
