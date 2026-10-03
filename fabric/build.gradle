@@ -21,6 +21,7 @@ dependencies {
     }
     modImplementation libs.fabric.api
     modImplementation libs.fabric.loader
+    modImplementation libs.fabric.language.kotlin
 
     modImplementation libs.dimcore.fabric
     modImplementation libs.dimdoors.fabric
@@ -76,6 +77,9 @@ loom {
     sourceSets {
         main {
             java {
+                srcDir "src/main/datagen"
+            }
+            kotlin {
                 srcDir "src/main/datagen"
             }
             resources {

@@ -52,7 +52,9 @@ dependencies {
     // projects pick them up too, e.g.:
     //   sharedCompileOnly libs.some.mod.common
     compileOnly libs.dimcore.common
+    accessTransformers libs.dimcore.common
     compileOnly libs.dimdoors.common
+    accessTransformers libs.dimdoors.common
 
     sharedCompileOnly libs.sable.common
     sharedCompileOnly(libs.simulated.common) {

@@ -1,0 +1,23 @@
+{
+  "type": "dimdoors:shaped_tesselating",
+  "key": {
+    "A": {
+      "item": "dimdoors:amalgam_lump"
+    },
+    "G": {
+      "item": "create:andesite_casing"
+    },
+    "S": {
+      "item": "create:shaft"
+    }
+  },
+  "pattern": [
+    " S ",
+    "AGA",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "dimindustry:liminal_coupling"
+  }
+}

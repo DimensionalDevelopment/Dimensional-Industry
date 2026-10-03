@@ -13,10 +13,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dimdev.dimdoors.api.util.Location;
+import org.dimdev.dimdoors.api.util.NbtUtil;
 import org.dimdev.dimdoors.block.entity.Rift;
 import org.dimdev.dimindustry.neoforge.create.CreateRiftMovement;
 import org.dimdev.dimindustry.neoforge.create.DimDoorsCreateContraption;
 import org.dimdev.dimdoors.rift.registry.RiftRegistry;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -44,7 +46,7 @@ public abstract class ContraptionMixin implements DimDoorsCreateContraption {
     public BlockPos anchor;
 
     @Override
-    public Map<BlockPos, Location> dimdoors$getTrackedRifts() {
+    public @NotNull Map<BlockPos, Location> dimdoors$getTrackedRifts() {
         return this.dimdoors$trackedRifts;
     }
 
@@ -55,7 +57,7 @@ public abstract class ContraptionMixin implements DimDoorsCreateContraption {
         }
 
         Location source = Location.ofWorld(serverLevel, pos);
-        if (RiftRegistry.getInstance().isRiftAt(source)) {
+        if (RiftRegistry.Companion.getInstance().isRiftAt(source)) {
             this.dimdoors$trackedRifts.put(pos.subtract(this.anchor), source);
         }
     }
@@ -69,7 +71,7 @@ public abstract class ContraptionMixin implements DimDoorsCreateContraption {
         for (Map.Entry<BlockPos, Location> entry : Map.copyOf(this.dimdoors$trackedRifts).entrySet()) {
             BlockPos sourcePos = entry.getKey().offset(this.anchor).offset(offset);
             Location actualSource = Location.ofWorld(serverLevel, sourcePos);
-            if (!entry.getValue().equals(actualSource) && RiftRegistry.getInstance().isRiftAt(actualSource)) {
+            if (!entry.getValue().equals(actualSource) && RiftRegistry.Companion.getInstance().isRiftAt(actualSource)) {
                 this.dimdoors$trackedRifts.put(entry.getKey(), actualSource);
             }
 
@@ -97,7 +99,7 @@ public abstract class ContraptionMixin implements DimDoorsCreateContraption {
         for (Map.Entry<BlockPos, Location> entry : this.dimdoors$trackedRifts.entrySet()) {
             CompoundTag tag = new CompoundTag();
             tag.putIntArray(DIMDOORS_POS_KEY, new int[]{entry.getKey().getX(), entry.getKey().getY(), entry.getKey().getZ()});
-            tag.put(DIMDOORS_LOCATION_KEY, Location.toNbt(entry.getValue()));
+            tag.put(DIMDOORS_LOCATION_KEY, NbtUtil.INSTANCE.serialize(entry.getValue(), Location.CODEC));
             rifts.add(tag);
         }
 
@@ -120,7 +122,7 @@ public abstract class ContraptionMixin implements DimDoorsCreateContraption {
                 continue;
             }
 
-            this.dimdoors$trackedRifts.put(new BlockPos(pos[0], pos[1], pos[2]), Location.fromNbt(tag.getCompound(DIMDOORS_LOCATION_KEY)));
+            this.dimdoors$trackedRifts.put(new BlockPos(pos[0], pos[1], pos[2]), NbtUtil.INSTANCE.deserialize(tag.getCompound(DIMDOORS_LOCATION_KEY), Location.CODEC));
         }
     }
 }
