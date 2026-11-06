@@ -16,13 +16,14 @@ import org.dimdev.dimdoors.block.entity.ModBlockEntityTypes
 import org.dimdev.dimdoors.block.entity.Rift
 import org.dimdev.dimdoors.block.entity.RiftData
 import org.dimdev.dimdoors.rift.targets.VirtualTarget
+import org.dimdev.dimdoors.util.UUIDExtensions.rift
 import org.dimdev.dimindustry.neoforge.create.CreateCompatBlockEntityTypes
 import org.dimdev.dimindustry.neoforge.create.target.EmptyKineticTarget
 import org.dimdev.dimindustry.neoforge.create.target.KineticTarget
 import java.util.function.Supplier
 import kotlin.math.abs
 
-class LiminalCouplingBlockEntity(type: BlockEntityType<*>, pos: BlockPos, state: BlockState) : GeneratingKineticBlockEntity(type, pos, state), Rift, KineticTarget {
+class LiminalCouplingBlockEntity(type: BlockEntityType<*>, pos: BlockPos, state: BlockState) : GeneratingKineticBlockEntity(type, pos, state), Rift<LiminalCouplingBlockEntity>, KineticTarget {
     override var isStateDirty: Boolean = false
     override var isDeleteRift: Boolean = true
 
@@ -55,10 +56,6 @@ class LiminalCouplingBlockEntity(type: BlockEntityType<*>, pos: BlockPos, state:
 
     override fun write(tag: CompoundTag, registries: HolderLookup.Provider?, clientPacket: Boolean) {
         super.write(tag, registries, clientPacket)
-
-        if (data.destination !== VirtualTarget.NoneTarget && level is ServerLevel) {
-            data.destination.location = Location.ofWorld(level as ServerLevel, worldPosition)
-        }
 
         tag.put("data", RiftData.CODEC.encodeStart(NbtOps.INSTANCE, data).getOrThrow())
     }
@@ -119,7 +116,7 @@ class LiminalCouplingBlockEntity(type: BlockEntityType<*>, pos: BlockPos, state:
 
     private fun resolveTargetKinetics(): KineticTarget {
         val target = target
-        val kineticTarget: KineticTarget = target.`as`(KineticTarget::class.java)!!
+        val kineticTarget: KineticTarget = target.`as`(KineticTarget::class.java, location.riftOrPlaceholder().rift()) ?: EmptyKineticTarget
 
         if (kineticTarget is KineticBlockEntity && isSameCreateNetwork(kineticTarget)) {
             return EmptyKineticTarget
@@ -144,8 +141,7 @@ class LiminalCouplingBlockEntity(type: BlockEntityType<*>, pos: BlockPos, state:
 
     override val riftLevel: Level get() = level!!
 
-    override fun handleSourceMoved(location: Location) {
-        super.handleSourceMoved(location)
+    override fun handleSourceGone(location: Location?) {
         syncTargetKinetics()
     }
 

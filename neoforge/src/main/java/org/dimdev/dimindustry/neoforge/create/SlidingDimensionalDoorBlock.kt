@@ -225,7 +225,7 @@ class SlidingDimensionalDoorBlock(settings: Properties, originalBlock: DoorSound
         return InteractionResult.sidedSuccess(world.isClientSide)
     }
 
-    override fun postTraverseEffect(level: Level, pos: BlockPos, state: BlockState, rift: Rift) {
+    override fun postTraverseEffect(level: Level, pos: BlockPos, state: BlockState, rift: Rift<*>) {
         super.postTraverseEffect(level, pos, state, rift)
     }
 

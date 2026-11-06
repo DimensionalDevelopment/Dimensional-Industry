@@ -8,6 +8,8 @@ import org.dimdev.dimcore.DimCore
 import org.dimdev.dimcore.api.transfer.FluidUnit
 import org.dimdev.dimcore.api.transfer.Handle
 import org.dimdev.dimdoors.block.entity.CodecRecord
+import org.dimdev.dimdoors.block.entity.Deserialize
+import org.dimdev.dimdoors.block.entity.Serialize
 import kotlin.math.max
 
 class HourGlassBlockEntity(pos: BlockPos, state: BlockState) :
@@ -62,12 +64,12 @@ class HourGlassBlockEntity(pos: BlockPos, state: BlockState) :
         return contents
     }
 
-    override fun serialize(serialize: Serialize<Tag, HourGlassBlockEntity>) {
+    override fun <T> serialize(serialize: Serialize<T, HourGlassBlockEntity>) {
         super.serialize(serialize)
         serialize.put<FluidUnit>(BUFFER)
     }
 
-    override fun deserialize(nbt: Deserialize<Tag>) {
+    override fun <T> deserialize(nbt: Deserialize<T>) {
         super.deserialize(nbt)
         buffer = nbt.get<HourGlassBlockEntity, FluidUnit>(BUFFER)
     }
@@ -141,6 +143,8 @@ class HourGlassBlockEntity(pos: BlockPos, state: BlockState) :
     companion object {
         private val CAPACITY: Long = 4 * DimCore.platform.bucketAmount()
 
-        val BUFFER: CodecRecord<HourGlassBlockEntity, FluidUnit> = CodecRecord<HourGlassBlockEntity, FluidUnit>("buffer", FluidUnit.CODEC, FluidUnit.empty(), HourGlassBlockEntity::buffer)
+        val BUFFER: CodecRecord<HourGlassBlockEntity, FluidUnit> = CodecRecord(
+            "buffer", FluidUnit.CODEC, FluidUnit.empty(), HourGlassBlockEntity::buffer
+        ) { hourglass, buffer -> hourglass.buffer = buffer }
     }
 }

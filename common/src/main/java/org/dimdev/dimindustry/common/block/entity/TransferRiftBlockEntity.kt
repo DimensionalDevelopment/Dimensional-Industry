@@ -10,6 +10,7 @@ import org.dimdev.dimcore.api.transfer.TransferType
 import org.dimdev.dimcore.api.transfer.Unit
 import org.dimdev.dimdoors.api.rift.target.TransferTarget
 import org.dimdev.dimdoors.block.entity.RiftBlockEntity
+import org.dimdev.dimdoors.util.UUIDExtensions.rift
 
 /**
  * A rift that carries a resource. Two roles, one object:
@@ -35,7 +36,7 @@ abstract class TransferRiftBlockEntity<T : Unit<T>, K : TransferTarget<T>, TE : 
 
     /** What is on the other side of the rift.  */
     fun remote(): K? {
-        return target.`as`(this.targetClass)
+        return target.`as`(this.targetClass, this.location.riftOrPlaceholder().rift())
     }
 
     abstract val targetClass: Class<K>

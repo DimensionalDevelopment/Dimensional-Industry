@@ -70,12 +70,11 @@ object CreateRiftMovement {
         trackedRifts.forEach { (pos, location) ->
             val targetPos = transform.apply(pos)
             val blockEntity = level.getBlockEntity(targetPos)
-            if (blockEntity is Rift) {
+            if (blockEntity is Rift<*>) {
                 if (!registry.isRiftAt(ofWorld(level, targetPos))) {
                     blockEntity.register()
                 }
                 blockEntity.updateType()
-                blockEntity.updateProperties()
             }
         }
     }

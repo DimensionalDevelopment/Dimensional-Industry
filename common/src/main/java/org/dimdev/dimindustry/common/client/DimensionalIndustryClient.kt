@@ -2,13 +2,14 @@ package org.dimdev.dimindustry.common.client
 
 import net.minecraft.client.renderer.RenderType
 import org.dimdev.dimcore.DimCore
+import org.dimdev.dimcore.api.client.EntityRendererProvider
+import org.dimdev.dimcore.api.client.EntityRendererRegister
 import org.dimdev.dimcore.api.client.ModClient
 import org.dimdev.dimindustry.common.block.DimensionalIndustryBlocks
 import org.dimdev.dimindustry.common.block.entity.DimensionalIndustryBlockEntities
-import org.dimdev.dimindustry.common.block.entity.HourGlassBlockEntity
 import org.dimdev.dimindustry.common.client.render.HourGlassBlockEntityRenderer
 
-object DimensionalIndustryClient : ModClient<IDimensionalIndustryClientSided<*>> {
+object DimensionalIndustryClient : ModClient<IDimensionalIndustryClientSided<*>>, EntityRendererProvider {
     override fun init(sided: IDimensionalIndustryClientSided<*>) {
         this.sided = sided
     }
@@ -17,8 +18,8 @@ object DimensionalIndustryClient : ModClient<IDimensionalIndustryClientSided<*>>
         DimCore.clientPlatform.register(RenderType.cutout(), DimensionalIndustryBlocks.HOURGLASS)
     }
 
-    override fun initBlockEntityRenderers(register: ModClient.BlockEntityRegister) {
-        register.register<HourGlassBlockEntity>(DimensionalIndustryBlockEntities.HOURGLASS, ::HourGlassBlockEntityRenderer)
+    override fun registerEntityRenderers(register: EntityRendererRegister) {
+        register.registerBlockEntity(DimensionalIndustryBlockEntities.HOURGLASS, ::HourGlassBlockEntityRenderer)
     }
 
 
